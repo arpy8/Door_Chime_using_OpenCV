@@ -10,21 +10,20 @@ def play_audio(audio_file):
     time.sleep(5)
 
 with open('ip.txt', 'r') as file:
-    ip = file.readline()    
-
+    ip = file.readline()
 
 droidcam_url = f"http://{ip}:4747/video"
 audio_file = "assets/audio.mp3"
 sleep_time = 60
 background = None
-motion_threshold = 100
+motion_threshold = 0.01
 audio_played = False
 audio_played_time = 0
 
 video_stream = cv2.VideoCapture(droidcam_url)
 cap = cv2.VideoCapture(0)
 
-x, y, width, height = 0, 250, 15, 15
+x, y, width, height = 30, 210, 20, 100
 
 ret, initial_frame = video_stream.read()
 roi = initial_frame[y:y + height, x:x + width]
@@ -59,10 +58,8 @@ while True:
 
     background = gray
 
-    # Draw a rectangle around the ROI
-    cv2.rectangle(frame, (x, y), (x + width, y + height), (0, 255, 0), 2)
+    cv2.rectangle(frame, (x, y), (x + width, y + height), (0, 0, 255), 1)
 
-    # Rotate the frame to the right
     frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
 
     cv2.imshow("Frame", frame)
