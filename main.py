@@ -12,19 +12,19 @@ def play_audio(audio_file):
 with open('ip.txt', 'r') as file:
     ip = file.readline()    
 
+
 droidcam_url = f"http://{ip}:4747/video"
 audio_file = "assets/audio.mp3"
-
-video_stream = cv2.VideoCapture(droidcam_url)
-
-cap = cv2.VideoCapture(0)
-
+sleep_time = 60
 background = None
-motion_threshold = 10
+motion_threshold = 100
 audio_played = False
 audio_played_time = 0
 
-x, y, width, height = 0, 240, 40, 40
+video_stream = cv2.VideoCapture(droidcam_url)
+cap = cv2.VideoCapture(0)
+
+x, y, width, height = 0, 250, 15, 15
 
 ret, initial_frame = video_stream.read()
 roi = initial_frame[y:y + height, x:x + width]
@@ -47,7 +47,7 @@ while True:
 
     current_time = time.time()
 
-    if current_time - audio_played_time >= 60:
+    if current_time - audio_played_time >= sleep_time:
         audio_played = False
 
     for contour in contours:
