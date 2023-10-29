@@ -1,6 +1,7 @@
 import cv2
 import time
 import pygame
+import json
 
 def play_audio(audio_file):
     pygame.init()
@@ -9,16 +10,20 @@ def play_audio(audio_file):
     pygame.mixer.music.play()
     time.sleep(5)
 
-with open('ip.txt', 'r') as file:
-    ip = file.readline()
+with open('config.json', 'r') as file:
+    data = json.load(file)
 
-droidcam_url = f"http://{ip}:4747/video"
-audio_file = "assets/audio.mp3"
-sleep_time = 60
+
+ip = data["ip"]
+audio_file = data["audio_file"]
+sleep_time = data["sleep_time"]
+motion_threshold = data["motion_threshold"]
+
 background = None
-motion_threshold = 0.01
 audio_played = False
 audio_played_time = 0
+
+droidcam_url = f"http://{ip}:4747/video"
 
 video_stream = cv2.VideoCapture(droidcam_url)
 cap = cv2.VideoCapture(0)
@@ -62,7 +67,7 @@ while True:
 
     frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
 
-    cv2.imshow("Frame", frame)
+    cv2.imshow("Door Chime", frame)
 
     if cv2.waitKey(1) & 0xFF == 27:
         break
