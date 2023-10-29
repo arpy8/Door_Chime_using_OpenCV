@@ -1,0 +1,6 @@
+{
+    "ip": "<enter your droid cam ip here>",
+    "audio_file": "assets/audio.mp3",
+    "sleep_time": 60,   
+    "motion_threshold": 0.1
+}
