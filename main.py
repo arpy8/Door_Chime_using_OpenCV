@@ -9,27 +9,23 @@ def play_audio(audio_file):
     pygame.mixer.music.play()
     time.sleep(5)
 
-
 with open('ip.txt', 'r') as file:
     ip = file.readline()    
 
 droidcam_url = f"http://{ip}:4747/video"
-audio_file = "assets/audio.wav"
+audio_file = "assets/audio.mp3"
 
 video_stream = cv2.VideoCapture(droidcam_url)
 
-cap = cv2.VideoCapture(0)   
+cap = cv2.VideoCapture(0)
 
 background = None
-motion_threshold = 100
+motion_threshold = 10
+audio_played = False
+audio_played_time = 0
 
-# Define the coordinates for the ROI (Region of Interest)
-x, y, width, height =   0, 240, 40, 40
+x, y, width, height = 0, 240, 40, 40
 
-# Create a window for the ROI
-cv2.namedWindow("ROI", cv2.WINDOW_NORMAL)
-
-# Read the initial frame to define the ROI
 ret, initial_frame = video_stream.read()
 roi = initial_frame[y:y + height, x:x + width]
 
@@ -49,16 +45,27 @@ while True:
 
     contours, _ = cv2.findContours(thresh[y:y + height, x:x + width].copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+    current_time = time.time()
+
+    if current_time - audio_played_time >= 60:
+        audio_played = False
+
     for contour in contours:
-        if cv2.contourArea(contour) > motion_threshold:
+        if cv2.contourArea(contour) > motion_threshold and not audio_played:
             play_audio(audio_file)
             print("Ting Tong!")
+            audio_played = True
+            audio_played_time = current_time
 
     background = gray
 
-    # Display the ROI in its own window
-    # cv2.imshow("ROI", roi)
-    cv2.imshow("Frame",frame)
+    # Draw a rectangle around the ROI
+    cv2.rectangle(frame, (x, y), (x + width, y + height), (0, 255, 0), 2)
+
+    # Rotate the frame to the right
+    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+
+    cv2.imshow("Frame", frame)
 
     if cv2.waitKey(1) & 0xFF == 27:
         break
