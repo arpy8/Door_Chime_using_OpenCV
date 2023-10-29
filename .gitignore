@@ -1,2 +1,5 @@
-ip.txt
 .conda/
+dist/
+build/
+ip.txt
+main.spec
