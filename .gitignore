@@ -1,5 +1,4 @@
 .conda/
 dist/
 build/
-main.spec
 *.json
